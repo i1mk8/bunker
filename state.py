@@ -21,4 +21,6 @@ class GameState(TypedDict):
     count_player: int
     message: str
     chosen_card: str
-    votes: dict  # {index_игрока: количество_голосов}
+    votes: dict
+    round_started: bool
+    players_done_in_round: int  # ← НОВОЕ: счётчик игроков, прошедших ход

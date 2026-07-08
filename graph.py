@@ -16,10 +16,22 @@ from nodes import (
 )
 
 
+def check_end_node(state: GameState):
+    """Отладочная нода для проверки"""
+    print(f"\n[ОТЛАДКА] === check_end_node ===")
+    print(f"  current_player_index: {state['current_player_index']}")
+    print(f"  count_round: {state['count_round']}")
+    print(f"  round_started: {state.get('round_started', False)}")
+    alive = sum(1 for p in state["players"] if p["is_alive"])
+    print(f"  живых игроков: {alive}")
+    return None
+
+
 def build_graph():
     graph = StateGraph(GameState)
 
-    graph.add_node("check_end", lambda state: None)
+    # Регистрируем ноды
+    graph.add_node("check_end", check_end_node)
     graph.add_node("choice_card", ChoiceCard)
     graph.add_node("disclosure_card", DisclosureCard)
     graph.add_node("discuss", discuss)
@@ -29,6 +41,7 @@ def build_graph():
     graph.add_node("increment_round", increment_round)
     graph.add_node("end_game", generate_end_game_message)
 
+    # Связи
     graph.add_edge(START, "check_end")
 
     graph.add_conditional_edges(
@@ -68,7 +81,12 @@ def build_graph():
     graph.add_edge("end_game", END)
 
     memory = MemorySaver()
-    return graph.compile(checkpointer=memory)
+    
+    # ⚠️ Останавливаем граф ПЕРЕД нодами, где нужен ввод от человека
+    return graph.compile(
+        checkpointer=memory,
+        interrupt_before=["choice_card", "discuss", "vote"]
+    )
 
 
-app = build_graph()
+graph = build_graph()
