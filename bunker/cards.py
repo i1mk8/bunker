@@ -9,20 +9,11 @@ from bunker.state import CARD_CATEGORIES, GameState, Player
 
 logger = logging.getLogger(__name__)
 
+CARDS_DIR = Path(__file__).resolve().parent.parent / "data" / "cards"
+
 
 def load_pools(cards_dir: Path) -> dict[str, list[str]]:
-    """Читает пулы значений для каждой категории карт из JSON-файлов.
-
-    Args:
-        cards_dir: Каталог с файлами вида profession.json, biology.json и так далее.
-
-    Returns:
-        Отображение категории в список её возможных значений.
-
-    Raises:
-        FileNotFoundError: Если файл какой-либо категории отсутствует.
-        ValueError: Если пул пуст или содержит не список строк.
-    """
+    """Читает пулы значений категорий карт из JSON-файлов каталога."""
     pools: dict[str, list[str]] = {}
     for category in CARD_CATEGORIES:
         path = cards_dir / f"{category}.json"
@@ -56,16 +47,10 @@ def deal_players(
     human_seat: int,
     rng: random.Random,
 ) -> list[Player]:
-    """Раздаёт count игрокам по одной карте из каждой категории.
+    """Раздаёт count игрокам по одной случайной карте из каждой категории.
 
-    Args:
-        pools: Пулы значений по категориям.
-        count: Число игроков в партии.
-        human_seat: Индекс живого игрока; вне диапазона — партия только из ботов.
-        rng: Источник случайности (возможно, инициализированный сидом).
-
-    Returns:
-        Список игроков со случайно розданными картами.
+    Игрок с индексом human_seat становится живым; при индексе вне диапазона
+    партия состоит только из ботов.
     """
     dealt = {category: _deal_category(values, count, rng) for category, values in pools.items()}
     players: list[Player] = []
@@ -87,21 +72,10 @@ def create_initial_state(
     players_count: int,
     capacity: int,
     human_seat: int,
-    cards_dir: Path,
+    cards_dir: Path = CARDS_DIR,
     seed: int | None = None,
 ) -> GameState:
-    """Собирает стартовое состояние партии с розданными картами.
-
-    Args:
-        players_count: Число игроков.
-        capacity: Вместимость бункера (условие конца игры).
-        human_seat: Индекс живого игрока.
-        cards_dir: Каталог с пулами карт.
-        seed: Сид раздачи; None — недетерминированная раздача.
-
-    Returns:
-        Начальное состояние графа игры.
-    """
+    """Собирает стартовое состояние партии с розданными картами."""
     rng = random.Random(seed)
     pools = load_pools(cards_dir)
     players = deal_players(pools, players_count, human_seat, rng)

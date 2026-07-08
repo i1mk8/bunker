@@ -30,6 +30,8 @@ target-version = "py312"
 # E/F — pycodestyle+pyflakes, I — isort, N — pep8-naming, UP — pyupgrade,
 # B — bugbear, D — pydocstyle (docstrings), SIM — flake8-simplify.
 select = ["E", "F", "I", "N", "UP", "B", "D", "SIM"]
+# D417 требует описывать аргументы в docstring — секции Args/Returns не используем.
+ignore = ["D417"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
