@@ -3,7 +3,6 @@ name = "bunker-game"
 version = "0.1.0"
 description = "Игра Бункер с LLM-агентами и живым игроком на LangChain."
 requires-python = ">=3.12,<3.14"
-# Точные версии зафиксированы (==) и продублированы в uv.lock.
 dependencies = [
     "langchain==1.3.11",
     "langchain-core==1.4.8",
