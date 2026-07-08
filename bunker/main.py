@@ -39,6 +39,7 @@ def main() -> None:
 
     console.narrate("Игра Бункер началась.")
     console.narrate(f"Игроков: {settings.players_count}, мест в бункере: {settings.capacity}.")
+    console.narrate(f"Катастрофа: {state['catastrophe']}")
 
     printed = 0
     values = graph.invoke(state, config)

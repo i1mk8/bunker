@@ -47,8 +47,9 @@ def _render_log(state: GameState) -> str:
 
 
 def render_context(state: GameState, player: Player) -> str:
-    """Собирает контекст промпта: рука игрока, состояние стола и его память."""
-    blocks = [_render_hand(player), _render_alive(state), _render_log(state)]
+    """Собирает контекст промпта: катастрофа, рука игрока, состояние стола и память."""
+    catastrophe = f"Катастрофа этой партии: {state['catastrophe']}"
+    blocks = [catastrophe, _render_hand(player), _render_alive(state), _render_log(state)]
     if player.memory.notes:
         blocks.append(f"Твои приватные заметки о партии:\n{player.memory.notes}")
     return "\n\n".join(block for block in blocks if block)

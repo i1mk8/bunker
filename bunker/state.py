@@ -64,6 +64,7 @@ class GameState(TypedDict):
     """Состояние игрового графа, сохраняемое чекпоинтером между раундами."""
 
     players: list[Player]
+    catastrophe: str
     event_log: Annotated[list[GameEvent], append_events]
     round_no: int
     capacity: int
