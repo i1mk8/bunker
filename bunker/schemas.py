@@ -20,7 +20,7 @@ class CardChoice(BaseModel):
     """Решение бота о том, какую карту раскрыть в текущем раунде."""
 
     card: CardName
-    reasoning: str
+    reasoning: str = ""
     updated_notes: str | None = None
 
 
@@ -28,5 +28,5 @@ class VoteDecision(BaseModel):
     """Решение бота о том, за чьё исключение отдать голос."""
 
     target_id: int
-    reasoning: str
+    reasoning: str = ""
     updated_notes: str | None = None
