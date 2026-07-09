@@ -33,7 +33,6 @@ class Settings(BaseSettings):
 
     capacity: int = 3
     players_count: int = 7
-    human_seat: int = 0
     deal_seed: int | None = None
     memory_window: int = 5
     thread_id: str = Field(default_factory=lambda: uuid.uuid4().hex)
