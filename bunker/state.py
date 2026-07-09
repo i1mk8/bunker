@@ -28,6 +28,7 @@ class PlayerMemory(BaseModel):
 
     notes: str = ""
     rolling_summary: str = ""
+    last_prompt_tokens: int = 0
 
 
 class Player(BaseModel):

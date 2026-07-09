@@ -11,6 +11,18 @@ logger = logging.getLogger(__name__)
 
 FREE_TEXT_FALLBACK = "(модель некорректно ответила)"
 
+# Число входных токенов последнего ответа модели — для отображения используемого
+# контекста в веб-интерфейсе. Обновляется в decide/free_text, читается сразу после
+# вызова (граф исполняется последовательно, гонок нет).
+LAST_INPUT_TOKENS = 0
+
+
+def _record_usage(message: object) -> None:
+    """Запоминает число входных токенов ответа модели (0, если сведений нет)."""
+    global LAST_INPUT_TOKENS
+    usage = getattr(message, "usage_metadata", None)
+    LAST_INPUT_TOKENS = int(usage.get("input_tokens", 0) or 0) if usage else 0
+
 
 def make_llm(temperature: float | None = None) -> ChatOpenAI:
     """Создаёт клиент ChatOpenAI на локальный эндпоинт LM Studio."""
@@ -31,13 +43,18 @@ def decide[T: BaseModel](schema: type[T], system: str, user: str, default: T) ->
     Делает settings.retries попыток; при неудаче возвращает default и логирует сбой.
     """
     structured = make_llm(settings.decision_temperature).with_structured_output(
-        schema, method=settings.structured_method
+        schema, method=settings.structured_method, include_raw=True
     )
     messages = [("system", system), ("user", user)]
+    _record_usage(None)
     for attempt in range(1, settings.retries + 1):
         try:
-            result = structured.invoke(messages)
-            return result if isinstance(result, schema) else schema.model_validate(result)
+            response = structured.invoke(messages)
+            _record_usage(response.get("raw"))
+            parsed = response.get("parsed")
+            if parsed is None:
+                raise ValueError(response.get("parsing_error") or "пустой ответ модели")
+            return parsed if isinstance(parsed, schema) else schema.model_validate(parsed)
         except Exception as error:
             logger.warning(
                 "Ответ модели не разобран (попытка %d/%d): %s", attempt, settings.retries, error
@@ -50,9 +67,12 @@ def free_text(system: str, user: str) -> str:
     """Возвращает свободную реплику модели; при отказе — запасной текст."""
     llm = make_llm()
     messages = [("system", system), ("user", user)]
+    _record_usage(None)
     for attempt in range(1, settings.retries + 1):
         try:
-            content = llm.invoke(messages).content
+            message = llm.invoke(messages)
+            _record_usage(message)
+            content = message.content
             text = content.strip() if isinstance(content, str) else str(content).strip()
             if text:
                 return text

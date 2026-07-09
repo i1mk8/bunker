@@ -47,6 +47,7 @@ def reveal(state: GameState) -> dict:
         choice = CardChoice.model_validate(interrupt(payload))
     else:
         choice = llm.decide(CardChoice, system, user, CardChoice(card=CardName(hidden[0])))
+        player.memory.last_prompt_tokens = llm.LAST_INPUT_TOKENS
 
     category = str(choice.card)
     if category not in player.cards or category in player.revealed:
@@ -106,6 +107,7 @@ def vote(state: GameState) -> dict:
         decision = VoteDecision.model_validate(interrupt(payload))
     else:
         decision = llm.decide(VoteDecision, system, user, VoteDecision(target_id=candidates[0].id))
+        voter.memory.last_prompt_tokens = llm.LAST_INPUT_TOKENS
 
     target = decision.target_id
     if target not in {player.id for player in candidates}:
