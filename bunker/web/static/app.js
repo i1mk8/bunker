@@ -114,9 +114,22 @@ function renderMeta(state) {
   );
 }
 
+let lastLogCount = -1;
+
 function renderLog(state) {
+  const events = state.event_log || [];
+  // Ничего нового — не трогаем DOM и прокрутку (журнал только растёт, рестарт → 0).
+  if (events.length === lastLogCount) return;
+
   const log = $("event-log");
-  const items = (state.event_log || []).map((event) =>
+  const panel = log.closest(".panel-log");
+  // Замеряем позицию до пересборки: следуем за журналом только если стоим у низа.
+  const prevScrollTop = panel ? panel.scrollTop : 0;
+  const atBottom = panel
+    ? panel.scrollHeight - panel.scrollTop - panel.clientHeight < 24
+    : true;
+
+  const items = events.map((event) =>
     h("li", { class: `timeline-item phase-${event.phase}` }, [
       h("span", { class: "timeline-round" }, `Р${event.round_no}`),
       h("span", { class: "timeline-text" }, event.text),
@@ -126,8 +139,9 @@ function renderLog(state) {
     items.push(h("li", { class: "timeline-item" }, [h("span", { class: "timeline-text" }, "Партия начинается…")]));
   }
   log.replaceChildren(...items);
-  const panel = log.closest(".panel-log");
-  if (panel) panel.scrollTop = panel.scrollHeight;
+  lastLogCount = events.length;
+
+  if (panel) panel.scrollTop = atBottom ? panel.scrollHeight : prevScrollTop;
 }
 
 function renderTurn(state) {
