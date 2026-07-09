@@ -231,7 +231,7 @@ function renderPlayerCard(player) {
   const status = player.is_human
     ? h("span", { class: "status-pill" }, "Вы")
     : h("span", { class: `status-pill ${player.is_alive ? "alive" : "dead"}` },
-        player.is_alive ? "в бункере" : "исключён");
+        player.is_alive ? "жив" : "исключён");
 
   const revealed = new Set(player.revealed || []);
   const cardTags = Object.entries(player.cards || {}).map(([label, value]) =>
