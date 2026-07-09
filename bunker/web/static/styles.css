@@ -491,7 +491,7 @@ body {
 }
 .option {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: var(--gap-8);
   padding: var(--gap-8) var(--gap-12);
   border: 0.5px solid var(--color-lichen);
@@ -503,8 +503,11 @@ body {
 }
 .option input {
   accent-color: var(--color-deep-fern);
+  align-self: center;
 }
 .option .opt-label {
+  flex: 0 0 auto;
+  min-width: 96px;
   font-family: var(--font-muoto);
   font-size: 11px;
   letter-spacing: -0.01em;
