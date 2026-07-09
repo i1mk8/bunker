@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Бункер</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="canvas">
+      <header class="masthead">
+        <div class="title-row">
+          <h1 class="display">БУНКЕР</h1>
+        </div>
+        <div class="meta-row" id="meta-row"></div>
+      </header>
+
+      <main class="layout">
+        <section class="col col-left">
+          <div class="section-label">[ Ваш ход ]</div>
+          <div class="panel" id="turn-panel"></div>
+
+          <div class="section-label">[ Журнал партии ]</div>
+          <div class="panel panel-log">
+            <ol class="timeline" id="event-log"></ol>
+          </div>
+        </section>
+
+        <section class="col col-right">
+          <div class="section-label">[ Модели и их заметки ]</div>
+          <div class="bots-grid" id="players-grid"></div>
+        </section>
+      </main>
+
+      <div class="chip" id="thinking-chip" hidden>
+        <span class="chip-dot"></span>модели думают…
+      </div>
+      <div class="chip chip-error" id="error-chip" hidden></div>
+    </div>
+
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>
