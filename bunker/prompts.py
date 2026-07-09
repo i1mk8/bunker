@@ -75,7 +75,10 @@ def reveal_messages(state: GameState, player: Player) -> tuple[str, str]:
 
 def discuss_messages(state: GameState, player: Player) -> tuple[str, str]:
     """Готовит промпты для фазы общего обсуждения."""
-    system = f"{SYSTEM_RULES} Сейчас общее обсуждение."
+    system = (
+        f"{SYSTEM_RULES} Сейчас общее обсуждение. Говори только о своих уже раскрытых "
+        "картах; не упоминай и не намекай на характеристики, которые ещё не раскрыл."
+    )
     user = (
         f"{render_context(state, player)}\n\n"
         "Выступи в обсуждении в двух-трёх предложениях: защити своё место в бункере "
