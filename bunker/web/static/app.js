@@ -220,10 +220,10 @@ function buildSpeech(title, hint) {
 
 function renderPlayers(state) {
   const grid = $("players-grid");
-  grid.replaceChildren(...(state.players || []).map(renderPlayerCard));
+  grid.replaceChildren(...(state.players || []).map((player) => renderPlayerCard(player, state)));
 }
 
-function renderPlayerCard(player) {
+function renderPlayerCard(player, state) {
   const classes = ["bot-card"];
   if (player.is_human) classes.push("is-human");
   if (!player.is_alive) classes.push("is-dead");
@@ -246,18 +246,27 @@ function renderPlayerCard(player) {
   ];
 
   if (!player.is_human) {
-    parts.push(renderFreshNotes(player));
+    parts.push(renderFreshNotes(player, state));
     parts.push(renderContext(player));
   }
   return h("div", { class: classes.join(" ") }, parts);
 }
 
-function renderFreshNotes(player) {
+function renderFreshNotes(player, state) {
   const fresh = (player.round_notes || "").trim();
-  return h("div", {}, [
-    h("div", { class: "block-label" }, "Новые заметки этого раунда"),
-    h("div", { class: `notes-fresh ${fresh ? "" : "empty"}` }, fresh || "пока пусто"),
-  ]);
+  const label = h("div", { class: "block-label" }, "Новые заметки этого раунда");
+  if (fresh) {
+    return h("div", {}, [label, h("div", { class: "notes-fresh" }, fresh)]);
+  }
+  // Пока граф считает, а заметки этого раунда ещё нет — показываем зелёный лоадер.
+  if (state.status === "advancing" && player.is_alive) {
+    const dots = h("span", { class: "loading-dots" }, [h("span"), h("span"), h("span")]);
+    return h("div", {}, [
+      label,
+      h("div", { class: "notes-fresh notes-loading" }, [dots, "модель пишет заметку…"]),
+    ]);
+  }
+  return h("div", {}, [label, h("div", { class: "notes-fresh empty" }, "пока пусто")]);
 }
 
 function renderContext(player) {
