@@ -50,6 +50,11 @@ body {
 
 body {
   background-color: var(--color-sage-paper);
+  /* Слабый мох-градиент поверх sage-канваса — чуть больше глубины, без белого фона. */
+  background-image:
+    radial-gradient(1200px 620px at 50% -12%, rgba(133, 192, 147, 0.16), transparent 68%),
+    radial-gradient(900px 700px at 100% 110%, rgba(119, 170, 131, 0.12), transparent 62%);
+  background-attachment: fixed;
   color: var(--color-forest-ink);
   font-family: var(--font-denim);
   font-size: 14px;
