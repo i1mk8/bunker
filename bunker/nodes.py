@@ -46,7 +46,8 @@ def reveal(state: GameState) -> dict:
         }
         choice = CardChoice.model_validate(interrupt(payload))
     else:
-        choice = llm.decide(CardChoice, system, user, CardChoice(card=CardName(hidden[0])))
+        default = CardChoice(new_notes="", card=CardName(hidden[0]))
+        choice = llm.decide(CardChoice, system, user, default)
         player.memory.last_prompt_tokens = llm.LAST_INPUT_TOKENS
 
     category = str(choice.card)
@@ -106,7 +107,8 @@ def vote(state: GameState) -> dict:
         }
         decision = VoteDecision.model_validate(interrupt(payload))
     else:
-        decision = llm.decide(VoteDecision, system, user, VoteDecision(target_id=candidates[0].id))
+        default = VoteDecision(new_notes="", target_id=candidates[0].id)
+        decision = llm.decide(VoteDecision, system, user, default)
         voter.memory.last_prompt_tokens = llm.LAST_INPUT_TOKENS
 
     target = decision.target_id
