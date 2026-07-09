@@ -58,8 +58,9 @@ def render_context(state: GameState, player: Player) -> str:
 def reveal_messages(state: GameState, player: Player) -> tuple[str, str]:
     """Готовит системный и пользовательский промпты для фазы раскрытия карты."""
     system = (
-        f"{SYSTEM_RULES} Сейчас фаза раскрытия карты: верни категорию и краткое "
-        "обоснование. По желанию обнови приватные заметки (updated_notes) для будущих раундов."
+        f"{SYSTEM_RULES} Сейчас фаза раскрытия карты. Сначала в new_notes запиши только "
+        "новые наблюдения этого раунда (кратко); прошлые заметки уже сохранены и показаны "
+        "выше — не повторяй их. Затем верни категорию карты для раскрытия."
     )
     hidden = ", ".join(
         f"{CATEGORY_LABELS[category]} ({category})" for category in player.hidden_categories()
@@ -86,8 +87,9 @@ def discuss_messages(state: GameState, player: Player) -> tuple[str, str]:
 def vote_messages(state: GameState, player: Player, candidates: list[Player]) -> tuple[str, str]:
     """Готовит промпты для анонимного голосования за исключение."""
     system = (
-        f"{SYSTEM_RULES} Сейчас анонимное голосование за исключение: верни id игрока "
-        "и обоснование. По желанию обнови приватные заметки (updated_notes)."
+        f"{SYSTEM_RULES} Сейчас анонимное голосование за исключение. Сначала в new_notes "
+        "запиши только новые наблюдения этого раунда (кратко); прошлые заметки уже сохранены "
+        "и показаны выше — не повторяй их. Затем верни id игрока для исключения."
     )
     listing_lines = []
     for candidate in candidates:

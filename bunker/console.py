@@ -40,7 +40,7 @@ def _ask_reveal(payload: dict) -> dict:
     for number, option in enumerate(options, start=1):
         print(f"  {number}. {option[0]}")
     choice = _read_index("Номер карты для раскрытия: ", len(options))
-    return {"card": options[choice - 1][1]}
+    return {"card": options[choice - 1][1], "new_notes": ""}
 
 
 def _ask_vote(payload: dict) -> dict:
@@ -49,7 +49,7 @@ def _ask_vote(payload: dict) -> dict:
     for number, candidate in enumerate(candidates, start=1):
         print(f"  {number}. {candidate['name']}")
     choice = _read_index("Номер игрока для исключения: ", len(candidates))
-    return {"target_id": candidates[choice - 1]["id"]}
+    return {"target_id": candidates[choice - 1]["id"], "new_notes": ""}
 
 
 def _ask_speech(prompt: str) -> str:

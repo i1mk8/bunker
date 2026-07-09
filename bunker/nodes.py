@@ -52,8 +52,9 @@ def reveal(state: GameState) -> dict:
     if category not in player.cards or category in player.revealed:
         category = hidden[0]
     player.revealed.append(category)
-    if choice.updated_notes:
-        player.memory.notes = choice.updated_notes
+    if choice.new_notes:
+        note = f"[Р{state['round_no']}] {choice.new_notes}"
+        player.memory.notes = f"{player.memory.notes}\n{note}".strip()
 
     text = f"{player.name} раскрыл: {CATEGORY_LABELS[category]} — {player.cards[category]}"
     event = GameEvent(round_no=state["round_no"], phase="reveal", actor_id=player.id, text=text)
@@ -109,8 +110,9 @@ def vote(state: GameState) -> dict:
     target = decision.target_id
     if target not in {player.id for player in candidates}:
         target = candidates[0].id
-    if decision.updated_notes:
-        voter.memory.notes = decision.updated_notes
+    if decision.new_notes:
+        note = f"[Р{state['round_no']}] {decision.new_notes}"
+        voter.memory.notes = f"{voter.memory.notes}\n{note}".strip()
 
     votes = dict(state["votes"])
     votes[target] = votes.get(target, 0) + 1
