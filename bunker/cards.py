@@ -12,6 +12,8 @@ logger = logging.getLogger(__name__)
 CARDS_DIR = Path(__file__).resolve().parent.parent / "data" / "cards"
 CATASTROPHES_FILE = Path(__file__).resolve().parent.parent / "data" / "catastrophes.json"
 
+HUMAN_SEAT = 0  # человек всегда занимает первое место
+
 
 def load_pools(cards_dir: Path) -> dict[str, list[str]]:
     """Читает пулы значений категорий карт из JSON-файлов каталога."""
@@ -57,13 +59,11 @@ def _deal_category(values: list[str], count: int, rng: random.Random) -> list[st
 def deal_players(
     pools: dict[str, list[str]],
     count: int,
-    human_seat: int,
     rng: random.Random,
 ) -> list[Player]:
     """Раздаёт count игрокам по одной случайной карте из каждой категории.
 
-    Игрок с индексом human_seat становится живым; при индексе вне диапазона
-    партия состоит только из ботов.
+    Игрок с индексом HUMAN_SEAT становится человеком, остальные — ботами.
     """
     dealt = {category: _deal_category(values, count, rng) for category, values in pools.items()}
     players: list[Player] = []
@@ -74,7 +74,7 @@ def deal_players(
                 id=index,
                 name=f"Игрок {index + 1}",
                 cards=cards,
-                is_human=(index == human_seat),
+                is_human=(index == HUMAN_SEAT),
             )
         )
     return players
@@ -84,7 +84,6 @@ def create_initial_state(
     *,
     players_count: int,
     capacity: int,
-    human_seat: int,
     cards_dir: Path = CARDS_DIR,
     catastrophes_file: Path = CATASTROPHES_FILE,
     seed: int | None = None,
@@ -93,7 +92,7 @@ def create_initial_state(
     rng = random.Random(seed)
     catastrophe = rng.choice(load_catastrophes(catastrophes_file))
     pools = load_pools(cards_dir)
-    players = deal_players(pools, players_count, human_seat, rng)
+    players = deal_players(pools, players_count, rng)
     return GameState(
         players=players,
         catastrophe=catastrophe,

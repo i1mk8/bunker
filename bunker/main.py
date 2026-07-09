@@ -29,7 +29,6 @@ def main() -> None:
     state = create_initial_state(
         players_count=settings.players_count,
         capacity=settings.capacity,
-        human_seat=settings.human_seat,
         seed=settings.deal_seed,
     )
     config = {
