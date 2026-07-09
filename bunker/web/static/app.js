@@ -269,16 +269,18 @@ function renderPlayerCard(player, state) {
 function renderFreshNotes(player, state) {
   const fresh = (player.round_notes || "").trim();
   const label = h("div", { class: "block-label" }, "Новые заметки этого раунда");
-  if (fresh) {
-    return h("div", {}, [label, h("div", { class: "notes-fresh" }, fresh)]);
-  }
-  // Пока граф считает, а заметки этого раунда ещё нет — показываем зелёный лоадер.
-  if (state.status === "advancing" && player.is_alive) {
+  // Лоадер горит только у того бота, чей сейчас ход (по очереди во всех фазах).
+  const thinking =
+    state.status === "advancing" && player.is_alive && player.id === state.acting_id;
+  if (thinking) {
     const dots = h("span", { class: "loading-dots" }, [h("span"), h("span"), h("span")]);
     return h("div", {}, [
       label,
-      h("div", { class: "notes-fresh notes-loading" }, [dots, "модель пишет заметку…"]),
+      h("div", { class: "notes-fresh notes-loading" }, [dots, "модель думает…"]),
     ]);
+  }
+  if (fresh) {
+    return h("div", {}, [label, h("div", { class: "notes-fresh" }, fresh)]);
   }
   return h("div", {}, [label, h("div", { class: "notes-fresh empty" }, "пока пусто")]);
 }

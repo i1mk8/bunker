@@ -85,6 +85,15 @@ def serialize_state(session: GameSession) -> dict:
     players = values.get("players", [])
     alive_count = sum(1 for player in players if player.is_alive)
     event_log = values.get("event_log", [])
+    # id бота, чей сейчас ход — под него фронт зажигает индикатор думанья.
+    current_index = values.get("current_index")
+    acting_id = (
+        players[current_index].id
+        if session.status == "advancing"
+        and isinstance(current_index, int)
+        and 0 <= current_index < len(players)
+        else None
+    )
     return {
         "status": session.status,
         "error": session.error,
@@ -93,6 +102,7 @@ def serialize_state(session: GameSession) -> dict:
         "capacity": values.get("capacity", 0),
         "catastrophe": values.get("catastrophe", ""),
         "alive_count": alive_count,
+        "acting_id": acting_id,
         "winner_message": values.get("winner_message", ""),
         "players": [serialize_player(values, player) for player in players],
         "event_log": [
