@@ -170,17 +170,15 @@ function buildReveal(pending) {
       h("span", { class: "opt-value" }, pending.hand ? pending.hand[label] : ""),
     ]),
   );
-  const notes = h("input", { type: "text", placeholder: "напр.: скрываю профессию до вотума" });
   const onclick = () => {
     const checked = document.querySelector('input[name="reveal-card"]:checked');
     if (!checked) return showError("Выберите карту для раскрытия.");
-    submit({ card: checked.value, new_notes: notes.value.trim() });
+    submit({ card: checked.value });
   };
   return h("div", { class: "turn-body" }, [
     h("div", { class: "panel-title" }, `Раскрытие карты · раунд ${pending.round}`),
     h("p", { class: "panel-hint" }, "Выберите характеристику, которую откроете всем."),
     h("div", { class: "options" }, options),
-    h("div", {}, [h("div", { class: "field-label" }, "Ваша заметка (необязательно)"), notes]),
     h("div", { class: "btn-row" }, [h("button", { class: "btn btn-moss", onclick }, "Раскрыть")]),
   ]);
 }
@@ -192,17 +190,15 @@ function buildVote(pending) {
       h("span", { class: "opt-value" }, candidate.name),
     ]),
   );
-  const notes = h("input", { type: "text", placeholder: "напр.: врач полезнее блогера" });
   const onclick = () => {
     const checked = document.querySelector('input[name="vote-target"]:checked');
     if (!checked) return showError("Выберите, за чьё исключение голосовать.");
-    submit({ target_id: Number(checked.value), new_notes: notes.value.trim() });
+    submit({ target_id: Number(checked.value) });
   };
   return h("div", { class: "turn-body" }, [
     h("div", { class: "panel-title" }, "Голосование за исключение"),
     h("p", { class: "panel-hint" }, "Голос анонимный: другие не увидят, за кого вы голосовали."),
     h("div", { class: "options" }, options),
-    h("div", {}, [h("div", { class: "field-label" }, "Ваша заметка (необязательно)"), notes]),
     h("div", { class: "btn-row" }, [h("button", { class: "btn btn-moss", onclick }, "Голосовать")]),
   ]);
 }
